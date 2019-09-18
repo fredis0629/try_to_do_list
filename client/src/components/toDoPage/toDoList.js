@@ -1,5 +1,10 @@
 import React from "react";
 import TableLine from "./tableLine";
+import styled from "styled-components";
+
+const TableCom = styled.table`
+  border-collapse: collapse;
+`;
 
 class ToDoList extends React.Component {
   componentDidMount() {
@@ -8,9 +13,19 @@ class ToDoList extends React.Component {
   render() {
     return (
       <div className="content">
-        <table>
-          <tbody>{this.props.data && this.props.data.map(item => <TableLine key={JSON.stringify(item)} item={item} />)}</tbody>
-        </table>
+        <TableCom>
+          <tbody>
+            <tr>
+              <th>Name</th>
+              <th>Task</th>
+              <th>Till</th>
+            </tr>
+            {this.props.data &&
+              this.props.data.map((item, index) => (
+                <TableLine key={JSON.stringify(item)} item={item} index={index} updateTask={this.props.updateTask} deleteTask={this.props.deleteTask} />
+              ))}
+          </tbody>
+        </TableCom>
       </div>
     );
   }

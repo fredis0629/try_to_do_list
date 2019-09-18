@@ -8,7 +8,7 @@ const cors = require("cors");
 var fs = require("fs");
 
 app.use(bodyParser.json());
-app.use(express.static(path.join(__dirname, "/src")));
+app.use(express.static(__dirname));
 app.use(cors());
 app.use(urlencodedParser);
 
@@ -17,12 +17,15 @@ app.get("/", (req, res) => {
     if (err) {
       console.log(err);
     } else {
-      res.send(JSON.parse(data));
+      var options = {
+        root: path.join(__dirname, "/build")
+      };
+      res.sendFile("/index.html", options);
     }
   });
 });
 
-app.get("/ajaxGetRequest", (req, res) => {
+app.get("/toDoList", (req, res) => {
   fs.readFile("./src/files/jsonDataFile.json", "utf8", function readFileCallback(err, data) {
     if (err) {
       console.log(err);
@@ -32,17 +35,59 @@ app.get("/ajaxGetRequest", (req, res) => {
   });
 });
 
-app.post("/addTask", (req, res) => {
+app.post("/toDoList/addTask", (req, res) => {
   fs.readFile("./src/files/jsonDataFile.json", "utf8", function readFileCallback(err, data) {
     if (err) {
       console.log(err);
     } else {
-      arr = [...JSON.parse(data), req.body];
+      if (req.body.name === "" || req.body.task === "") {
+        res.status(400);
+        arr = JSON.parse(data);
+        res.send(arr);
+      } else {
+        arr = [...JSON.parse(data), req.body];
+        json = JSON.stringify(arr);
+        fs.writeFile("./src/files/jsonDataFile.json", json, "utf8", err => {
+          if (err) return res.sendStatus(404);
+          console.log(`Запись файла завершена.`);
+          res.send(arr);
+        });
+      }
+    }
+  });
+});
+
+app.patch("/toDoList/update/:id/:operation", (req, res) => {
+  fs.readFile("./src/files/jsonDataFile.json", "utf8", function readFileCallback(err, data) {
+    if (err) {
+      console.log(err);
+    } else {
+      arr = JSON.parse(data);
+      if (!arr[req.params.id]) return res.sendStatus(400);
+      arr[req.params.id][req.params.operation] = !arr[req.params.id][req.params.operation];
       json = JSON.stringify(arr);
       fs.writeFile("./src/files/jsonDataFile.json", json, "utf8", err => {
-        if (err) throw err; // если возникла ошибка
+        if (err) return res.sendStatus(404);
+        console.log(`Запись файла завершена.`);
+        res.status(200).end();
+      });
+    }
+  });
+});
+
+app.delete("/toDoList/delete/:id", (req, res) => {
+  fs.readFile("./src/files/jsonDataFile.json", "utf8", function readFileCallback(err, data) {
+    if (err) {
+      console.log(err);
+    } else {
+      arr = JSON.parse(data);
+      if (!arr[req.params.id]) return res.sendStatus(404);
+      arr.splice(req.params.id, 1);
+      json = JSON.stringify(arr);
+      fs.writeFile("./src/files/jsonDataFile.json", json, "utf8", err => {
+        if (err) return res.sendStatus(404);
         console.log(`Запись файла завершена. Содержимое файла: ${arr}`);
-        res.send(arr);
+        res.status(200).end();
       });
     }
   });

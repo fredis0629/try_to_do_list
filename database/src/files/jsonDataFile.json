@@ -1,1 +1,7 @@
-[{"name":"Nick","task":"do somesing","date":"3/19/2020"},{"name":"Jone","task":"do nosing","date":"3/19/2020"},{"name":"qq","task":"asdf","date":"2019-09-07"},{"name":"asd","task":"asd","date":"2019-09-30"},{"name":"sadf","task":"sdf","date":"2019-09-14"},{"name":"a","task":"aa","date":"2019-09-13"},{"name":"Den","task":"cleaning the room after work","date":"2019-09-13"},{"name":"sdgfsdsdf","task":"sdfsdfsdf","date":"2019-09-18"},{"name":"sdgfsdsd","task":"sdfsdfsdf","date":"2019-09-18"}]
+[
+  { "name": "Rostik", "task": "Do homework", "date": "2019-09-16", "important": false, "done": false },
+  { "name": "Den", "task": "Smoking sigaru", "date": "2019-09-16", "important": false, "done": false },
+  { "name": "Nikita", "task": "Go to 6 flor and drinking vodka", "date": "2019-09-16", "important": false, "done": false },
+  { "name": "Nikita", "task": "Drinking vodka", "date": "2019-09-17", "important": false, "done": false },
+  { "name": "YYY", "task": "Dansing", "date": "2019-09-17", "important": false, "done": false }
+]

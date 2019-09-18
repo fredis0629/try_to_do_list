@@ -6,7 +6,7 @@ const PostForm = styled.form`
   flex-direction: column;
   width: min-content;
   border: 2px solid black;
-  margin: 10px;
+  margin: 10px auto;
   border-radius: 20%;
   padding: 15px;
 `;
@@ -29,11 +29,11 @@ class FormToAddTask extends React.Component {
     return (
       <PostForm action="/addTask" method="post" id="ajaxPost" onSubmit={this.props.submitForm}>
         <StyledP>Add Task</StyledP>
-        Name: <input type="text" name="name" />
+        Name: <input type="text" name="name" value={this.props.form.name} onChange={this.props.changeName} />
         <br />
-        Task: <input type="text" name="task" />
+        Task: <input type="text" name="task" value={this.props.form.task} onChange={this.props.changeTask} />
         <br />
-        Date: <input type="date" name="date" />
+        Date: <input type="date" name="date" value={this.props.form.date} onChange={this.props.changeDate} />
         <br />
         <SubmitInput type="submit" value="Submit" />
       </PostForm>

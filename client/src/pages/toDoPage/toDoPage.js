@@ -14,38 +14,99 @@ const DivConteiner = styled.div`
 class ToDoPage extends React.Component {
   state = {
     serverUrl: `http://${window.location.hostname}:9000/`,
-    data: []
+    data: [],
+    form: {
+      name: "",
+      task: "",
+      date: ""
+    }
   };
 
   submitForm = event => {
     event.preventDefault();
-    const ajaxPostRequestSubmit = window.ajaxPost;
-    let task = {};
-    for (let index = 0; index < ajaxPostRequestSubmit.length - 1; index++) {
-      task[ajaxPostRequestSubmit[index].name] = ajaxPostRequestSubmit[index].value;
-    }
-    fetch(`${this.state.serverUrl}addTask`, {
+    fetch(`${this.state.serverUrl}toDoList/addTask`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json;charset=utf-8"
       },
-      body: JSON.stringify(task)
+      body: JSON.stringify(this.state.form)
     })
-      .then(res => res.json())
-      .then(arr => this.setState({ data: arr }));
+      .then(res => {
+        if (res.status !== 200) throw new Error(res.status);
+        return res.json();
+      })
+      .then(arr => this.setState({ data: arr, form: { name: "", task: "", date: "" } }))
+      .catch(e => console.log(e));
   };
 
   getToDoList = () => {
-    fetch(`${this.state.serverUrl}ajaxGetRequest`)
+    fetch(`${this.state.serverUrl}toDoList`)
       .then(res => res.json())
-      .then(arr => this.setState({ data: arr }));
+      .then(arr => this.setState({ data: arr }))
+      .catch(e => console.log(e));
+  };
+  changeName = e => {
+    const tmp = e.target.value;
+    this.setState(cur => ({
+      form: {
+        name: tmp,
+        task: cur.form.task,
+        date: cur.form.date
+      }
+    }));
+  };
+  changeTask = e => {
+    const tmp = e.target.value;
+    this.setState(cur => ({
+      form: {
+        name: cur.form.name,
+        task: tmp,
+        date: cur.form.date
+      }
+    }));
+  };
+  changeDate = e => {
+    const tmp = e.target.value;
+    this.setState(cur => ({
+      form: {
+        name: cur.form.name,
+        task: cur.form.task,
+        date: tmp
+      }
+    }));
+  };
+  updateTask = (id, operation, index) => {
+    fetch(`${this.state.serverUrl}toDoList/update/${id}/${operation}`, {
+      method: "PATCH"
+    })
+      .then(() => {
+        this.setState(cur => (cur.data[index][operation] = !cur.data[index][operation]));
+      })
+      .catch(e => console.log(e));
+  };
+  deleteTask = id => {
+    fetch(`${this.state.serverUrl}toDoList/delete/${id}`, {
+      method: "DELETE"
+    })
+      .then(() => {
+        this.setState(cur => {
+          return { data: cur.data.filter(obj => obj.id !== id) };
+        });
+      })
+      .catch(e => console.log(e));
   };
 
   render() {
     return (
       <DivConteiner>
-        <FormToAddTask submitForm={this.submitForm} />
-        <ToDoList getToDoList={this.getToDoList} data={this.state.data} />
+        <FormToAddTask
+          submitForm={this.submitForm}
+          form={this.state.form}
+          changeDate={this.changeDate}
+          changeName={this.changeName}
+          changeTask={this.changeTask}
+        />
+        <ToDoList getToDoList={this.getToDoList} data={this.state.data} updateTask={this.updateTask} deleteTask={this.deleteTask} />
       </DivConteiner>
     );
   }
