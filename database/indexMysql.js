@@ -15,7 +15,7 @@ const connection = mysql.createConnection({
 });
 
 app.use(bodyParser.json());
-app.use(express.static(__dirname));
+app.use(express.static(path.join(__dirname, "/build")));
 app.use(cors());
 app.use(urlencodedParser);
 
@@ -26,10 +26,7 @@ app.on("exit", code => {
 });
 
 app.get("/", (req, res) => {
-  var options = {
-    root: path.join(__dirname, "/build")
-  };
-  res.sendFile("/index.html", options);
+  res.sendFile(path.join(__dirname, "/build/index.html"), options);
 });
 
 app.get("/toDoList", (req, res) => {
