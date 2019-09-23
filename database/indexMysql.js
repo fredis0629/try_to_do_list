@@ -26,7 +26,7 @@ app.on("exit", code => {
 });
 
 app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "/build/index.html"), options);
+  res.sendFile(path.join(__dirname, "/build/index.html"));
 });
 
 app.get("/toDoList", (req, res) => {
@@ -42,8 +42,8 @@ app.get("/toDoList", (req, res) => {
 
 app.post("/toDoList/addTask", (req, res) => {
   if (req.body.name === "" || req.body.task === "" || req.body.date === "") return res.status(400).end();
-  const sql = `INSERT INTO Tasks(name, task, date, important, done) VALUES("${req.body.name}", "${req.body.task}", "${req.body.date}", false, false)`;
-  connection.query(sql);
+  const sql = `INSERT INTO Tasks(name, task, date, important, done) VALUES(?, ?, ?, false, false)`;
+  connection.query(sql, [req.body.name, req.body.task, req.body.date]);
   connection.query(`SELECT * FROM Tasks`, (error, results, fields) => {
     if (error) {
       connection.end();
@@ -55,8 +55,8 @@ app.post("/toDoList/addTask", (req, res) => {
 });
 
 app.patch("/toDoList/update/:id/:operation", (req, res) => {
-  const sql = `UPDATE Tasks SET ${req.params.operation} = !${req.params.operation} WHERE id = ${req.params.id}`;
-  connection.query(sql, error => {
+  const sql = `UPDATE Tasks SET ?? = !?? WHERE id = ?`;
+  connection.query(sql, [req.params.operation, req.params.operation, req.params.id], error => {
     if (error) {
       connection.end();
       console.error(error.message);
@@ -67,8 +67,8 @@ app.patch("/toDoList/update/:id/:operation", (req, res) => {
 });
 
 app.delete("/toDoList/delete/:id", (req, res) => {
-  const sql = `DELETE FROM Tasks WHERE id = ${req.params.id}`;
-  connection.query(sql, error => {
+  const sql = `DELETE FROM Tasks WHERE id = ?`;
+  connection.query(sql, [req.params.id], error => {
     if (error) {
       connection.end();
       console.error(error.message);
