@@ -105,7 +105,6 @@ app.delete("/toDoList/delete/:id", (req, res) => {
       id: req.params.id
     }
   }).then(() => {
-    console.log("Done");
     res.status(200).end();
   });
 });
